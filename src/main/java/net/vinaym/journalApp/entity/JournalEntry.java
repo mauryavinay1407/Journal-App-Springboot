@@ -1,13 +1,35 @@
 package net.vinaym.journalApp.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Document("journal-entries")
 public class JournalEntry {
-    private long id;
+    @Id
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId id;
 
     private String title;
 
     private String content;
 
-    public long getId() {
+    private LocalDateTime date;
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public ObjectId getId() {
         return id;
     }
 
@@ -27,7 +49,7 @@ public class JournalEntry {
         this.content = content;
     }
 
-    public void setId(long id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 }
