@@ -18,21 +18,21 @@ public class JournalEntryControllerV2 {
     @Autowired
     private JournalEntryService journalEntryService;
 
-    @PostMapping
-    public ResponseEntity<?> createEntry(@RequestBody JournalEntry myEntry){
+    @PostMapping("/{userName}")
+    public ResponseEntity<?> createJournalEntriesOfUser(@RequestBody JournalEntry myEntry,@PathVariable String userName){
         try {
-            journalEntryService.saveEntry(myEntry);
-            return new ResponseEntity<>(true,HttpStatus.CREATED);
+            journalEntryService.saveEntry(myEntry,userName);
+            return new ResponseEntity<>("Entry created successfully!",HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getEntries(){
-        List<JournalEntry> AllEntry = journalEntryService.getAllEntries();
-        if(AllEntry != null && !AllEntry.isEmpty()){
-            return new ResponseEntity<>(AllEntry,HttpStatus.OK);
+    @GetMapping("/{userName}")
+    public ResponseEntity<?> getJournalEntriesOfUser(@PathVariable String userName){
+        List<JournalEntry> allEntries = journalEntryService.getAllEntries(userName);
+        if(allEntries != null && !allEntries.isEmpty()){
+            return new ResponseEntity<>(allEntries,HttpStatus.OK);
         }
         return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -45,14 +45,15 @@ public class JournalEntryControllerV2 {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @DeleteMapping("id/{myId}")
-    public ResponseEntity<?> deleteEntry(@PathVariable ObjectId myId){
-         journalEntryService.deleteEntryById(myId);
+
+    @DeleteMapping("id/{userName}/{myId}")
+    public ResponseEntity<?> deleteEntry(@PathVariable ObjectId myId,@PathVariable String userName){
+         journalEntryService.deleteEntryById(myId,userName);
          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("id/{myId}")
-    public ResponseEntity<?> updateEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntry){
+    @PutMapping("id/{userName}/{myId}")
+    public ResponseEntity<?> updateEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntry,@PathVariable String userName){
         JournalEntry old = journalEntryService.getEntryById(myId).orElse(null);
         if(old != null){
             old.setTitle(newEntry.getTitle()!= null && !newEntry.getTitle().equals("") ? newEntry.getTitle() : old.getTitle());
