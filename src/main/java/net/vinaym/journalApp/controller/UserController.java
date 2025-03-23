@@ -1,13 +1,13 @@
 package net.vinaym.journalApp.controller;
 
-import net.vinaym.journalApp.entity.JournalEntry;
 import net.vinaym.journalApp.entity.User;
-import net.vinaym.journalApp.service.JournalEntryService;
+import net.vinaym.journalApp.repository.UserRepository;
 import net.vinaym.journalApp.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,15 +20,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-   @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User newUser){
-       try{
-           userService.saveEntry(newUser);
-           return new ResponseEntity<>(true,HttpStatus.CREATED);
-       } catch (Exception e) {
-           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-       }
-   }
+    @Autowired
+    private UserRepository userRepository;
 
    @GetMapping
     public ResponseEntity<?> getAll(){
@@ -39,14 +32,24 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
    }
 
-    @PutMapping("/{userName}")
-    public ResponseEntity<?> updateUser(@RequestBody User user,@PathVariable String userName){
-       Optional<User> existingUser = userService.findByUserName(userName);
-       if(existingUser.isPresent()){
-           existingUser.get().setUserName(user.getUserName());
-           existingUser.get().setPassword(user.getPassword());
-           userService.saveEntry(existingUser.get());
-       }
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestBody User user){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        Optional<User> userInDB = userService.findByUserName((userName));
+        if(userInDB.isPresent()){
+            userInDB.get().setUserName(user.getUserName());
+            userInDB.get().setPassword(user.getPassword());
+            userService.saveNewUser(userInDB.get());
+        }
+       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(){
+       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       String userName = authentication.getName();
+       userRepository.deleteByUserName(userName);
        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
