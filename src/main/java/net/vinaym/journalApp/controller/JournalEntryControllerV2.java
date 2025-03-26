@@ -1,5 +1,6 @@
 package net.vinaym.journalApp.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import net.vinaym.journalApp.entity.JournalEntry;
 import net.vinaym.journalApp.entity.User;
 import net.vinaym.journalApp.service.JournalEntryService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryControllerV2 {

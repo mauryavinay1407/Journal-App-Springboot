@@ -10,7 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +29,20 @@ public class UserService {
             myEntry.setRoles(Arrays.asList("USER"));
             userRepository.save(myEntry);
         } catch (Exception e) {
-            log.error("Exception ", e);
+            log.error("An error occurred while saving user ", e);
         }
     }
+    public void saveNewAdmin(User myEntry){
+        try {
+            myEntry.setPassword(passwordEncoder.encode(myEntry.getPassword()));
+            myEntry.setRoles(Arrays.asList("USER","ADMIN"));
+            userRepository.save(myEntry);
+        } catch (Exception e) {
+            log.error("An error occurred while saving admin ", e);
+        }
+    }
+
+
 
     public void saveEntry(User myEntry){
         userRepository.save(myEntry);

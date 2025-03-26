@@ -37,7 +37,7 @@ public class JournalEntryService {
             }
         } catch (Exception e) {
             log.error("Exception ", e);
-            throw new RuntimeException("An error occured while saving the entry.",e);
+            throw new RuntimeException("An error occurred while saving the entry.", e);
         }
     }
 
@@ -50,7 +50,7 @@ public class JournalEntryService {
         return user.map(u -> u.getJournalEntries()).orElse(Collections.emptyList());
     }
 
-    public Optional<JournalEntry> getEntryById(ObjectId myId){
+    public Optional<JournalEntry>   getEntryById(ObjectId myId){
         return  journalEntryRepository.findById(myId);
     }
 
@@ -67,6 +67,7 @@ public class JournalEntryService {
                 }
             }
         } catch (Exception e) {
+            log.error("An Error occurred", e);
             throw new RuntimeException("An error occurred while deleting the entry.", e);
         }
         return removed;

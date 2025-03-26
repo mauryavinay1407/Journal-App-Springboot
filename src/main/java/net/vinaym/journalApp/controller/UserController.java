@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,15 +21,6 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-
-   @GetMapping
-    public ResponseEntity<?> getAll(){
-        List<User> AllUsers = userService.getAllUsers();
-        if(AllUsers != null && !AllUsers.isEmpty()){
-            return new ResponseEntity<>(AllUsers,HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-   }
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody User user){
